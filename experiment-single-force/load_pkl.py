@@ -1,0 +1,56 @@
+import pickle as pkl
+import numpy as np
+from numpy import random as nr
+import pandas as pd
+import torch
+
+
+filepath = 'D:/ghhhub/Symplectic-ODENet/experiment-single-force/model_new.pkl'
+f = open('D:/ghhhub/Symplectic-ODENet/experiment-single-force/model_new.pkl', 'rb')
+data_torch = torch.load(f, map_location='cpu')
+# data_panda = pd.read_pickle(filepath)
+# data_pkl = pkl.load(f)
+# r = nr.randint(0, 10, size=(4, 3))
+# r1 = r.reshape(12,1)
+# print(r, r1)
+i = 0
+for c in data_torch.keys():
+    print(c)
+H_para = data_torch['H_net.linear1.weight'].numpy()
+# print(H_para.shape)
+np.savetxt('H_net_linear1_weight.txt', H_para, fmt='%1.4e')
+H_para = data_torch['H_net.linear1.bias'].numpy()
+# print(H_para.shape)
+np.savetxt('H_net_linear1_bias.txt', H_para, fmt='%1.4e')
+H_para = data_torch['H_net.linear2.weight'].numpy()
+np.savetxt('H_net_linear2_weight_origin.txt', H_para, fmt='%1.4e')
+# H_para = H_para.reshape(100*100, 1)
+print(H_para.shape)
+np.savetxt('H_net_linear2_weight.txt', H_para, fmt='%1.4e')
+h = np.loadtxt('H_net_linear2_weight.txt')
+# print(h.shape)
+H_para = data_torch['H_net.linear2.bias'].numpy()
+# print(H_para.shape)
+np.savetxt('H_net_linear2_bias.txt', H_para, fmt='%1.4e')
+H_para = data_torch['H_net.linear3.weight'].numpy()
+# H_para =H_para.reshape(55, 1)
+# print(H_para.shape)
+np.savetxt('H_net_linear3_weight.txt', H_para, fmt='%1.4e')
+H_para = data_torch['H_net.linear3.bias'].numpy()
+np.savetxt('H_net_linear3_bias.txt', H_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear1.weight'].numpy()
+np.savetxt('g_net_linear1_weight.txt', G_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear1.bias'].numpy()
+np.savetxt('g_net_linear1_bias.txt', G_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear2.weight'].numpy()
+# G_para = G_para.reshape(100*100, 1)
+np.savetxt('g_net_linear2_weight.txt', G_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear2.bias'].numpy()
+np.savetxt('g_net_linear2_bias.txt', G_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear3.weight'].numpy()
+print(G_para.shape)
+np.savetxt('g_net_linear3_weight_origin.txt', G_para, fmt='%1.4e')
+# G_para = G_para.reshape(300, 1)
+np.savetxt('g_net_linear3_weight.txt', G_para, fmt='%1.4e')
+G_para = data_torch['g_net.linear3.bias'].numpy()
+np.savetxt('g_net_linear3_bias.txt', G_para, fmt='%1.4e')

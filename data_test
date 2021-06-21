@@ -1,0 +1,137 @@
+import numpy as np
+import torch
+import math
+import matplotlib.pyplot as plt
+from data import get_dataset, arrange_data
+# a=np.loadtxt('./data/X coordinate, vehicle origin.txt')
+# x=[3]
+# c=x*a[0:6000]
+# b=len(c)
+# print(a,c,b)
+# xs = []
+# xs_force = []
+# for i in range(2):
+#     p = torch.randn(45)
+#     q = torch.randn(45)
+#     u = torch.randn(45)
+#     xs.append(np.stack((q, p, u), axis=1))
+#
+# xs_force.append(np.stack(xs, axis=1))
+px = np.loadtxt('./data/X coordinate, vehicle origin.txt')
+py = np.loadtxt('./data/Y coordinate, vehicle origin.txt')
+phi = np.loadtxt('./data/Yaw, vehicle.txt')
+m = np.loadtxt('./data/sprung_mass.txt')
+i = np.loadtxt('./data/yaw_inertia.txt')
+vx = np.loadtxt('./data/Longitudinal speed, vehicle.txt')
+vy = np.loadtxt('./data/Lateral speed, vehicle.txt')
+w = np.loadtxt('./data/yaw_rate.txt')
+l_delta = np.loadtxt('./data/left_steer_angle_about_kingpin.txt')
+r_delta = np.loadtxt('./data/right_steer_angle_about_kingpin.txt')
+delta = []
+
+Ix = m * vx
+Iy = m * vy
+Iw = i * w
+# plt.plot(Ix)
+# plt.show()
+for i in range(len(l_delta)):
+    delta.append((l_delta[i]+r_delta[i])/2)
+p = [Ix[1500:6000], Iy[1500:6000], Iw[1500:6000]]
+q = [px[1500:6000], py[1500:6000], phi[1500:6000]]
+u = delta[1500:6000]
+a = []
+v = []
+# for j in range(6000):
+#     vt = math.sqrt(vx[i] * vx[i] + vy[i] * vy[i])
+#     v.append(vt)
+#
+# print(v)
+x_temp = []
+xs = []
+j = 0
+xs = []
+for k in range(50):
+    for m in range(90):
+        x_temp.append([p[0][k * 90 + m], p[1][k * 90 + m], p[2][k * 90 + m], q[0][k * 90 + m], q[1][k * 90 + m],
+                       q[2][k * 90 + m], u[k * 90 + m]])
+    xs.append(x_temp)
+    x_temp = []
+xs = np.array(xs)
+xs = np.stack(xs, axis=1)
+xs_f = np.stack(xs,axis=0)
+y = []
+for i in range(50):
+    for j in range(90):
+        y.append(xs[j, i, :])
+y=np.array(y)
+print(xs.shape)
+plt.plot(y[:,0])
+plt.show()
+
+# for k in range(90):
+#     for m in range(50):
+#         x_temp.append([p[0][k * 50 + m], p[1][k * 50 + m], p[2][k * 50 + m], q[0][k * 50 + m], q[1][k * 50 + m],
+#                        q[2][k * 50 + m], u[k * 50 + m]])
+#     xs.append(x_temp)
+#     x_temp = []
+
+# t_eval = np.linspace(1, 20, 20) * 0.05
+# xs = torch.tensor(xs_f, dtype=torch.float32)
+# print(xs.shape)
+# train_xs = xs[0,:,:]
+# print(train_xs.shape)
+# split_ix = int(50 * 0.5)
+# train_x, test_x = xs[:, :split_ix, :], xs[:, split_ix:, :]
+# print(train_x.shape)
+
+# if_train = 0
+# order = 0
+#
+# x = train_x[7, :, :]
+#
+# for i in range(train_x.shape[0]):
+#     if train_x[i, :, :].equal(x) == 1:
+#         order = i
+#         if_train = 1
+#     else:
+#         continue
+#
+# if if_train == 1:
+#     for i in range(test_x.shape[0]):
+#         if test_x[i, :, :].equal(x) == 1:
+#             order = i
+#             if_train = 0
+#         else:
+#             continue
+
+# print(order, if_train,  train_x[i, :, :].equal(x), i, x.shape)
+# ar = np.array([xs])
+# data = {}
+# data['x'] = np.array([xs])
+# split_ix = int(50 * 0.5)
+# split_data = {}
+# split_data['x'], split_data['test_x'] = data['x'][:, :, :split_ix, :], data['x'][:, :, split_ix:, :]
+# data = split_data
+# data['t'] = np.linspace(1, 120, 120) * 0.05
+#
+# train_x, t_eval = arrange_data(data['x'], data['t'], num_points=120)
+# print(split_data['x'].shape, train_xs, t_eval)
+
+# l_dot_delta = np.loadtxt('./data/Steer rate about kingpin L1.txt')
+# R_dot_delta = np.loadtxt('./data/Steer rate about kingpin R1.txt')
+# delta_dot = []
+# for i in range(len(l_dot_delta[:6000])):
+#     delta_dot.append((l_dot_delta[i] + R_dot_delta[i]) / 2)
+# u_dot = []
+# u_temp = []
+# for k in range(120):
+#     for m in range(50):
+#         u_temp.append([delta_dot[k * 50 + m]])
+#     u_dot.append(u_temp)
+#     u_temp = []
+#
+# u = torch.tensor(u_dot, dtype=torch.float32)
+# split_data = {}
+# split_ix = int(50 * 0.5)
+# split_data['u'], split_data['test_u'] = u[:, :split_ix, :], u[:, split_ix:, :]
+# print(split_data['u'].shape)
